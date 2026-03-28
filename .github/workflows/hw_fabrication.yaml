@@ -1,0 +1,164 @@
+# hw_fabrication.yml
+name: Fabrication
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['hardware/**']
+
+jobs:
+
+  # -------------------------------------------------------
+  # Step 1: discover all KiCad projects in hardware/
+  # -------------------------------------------------------
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.find_boards.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Find KiCad projects
+        id: find_boards
+        run: |
+          FOLDERS=$(find hardware -maxdepth 2 -name '*.kibot.yaml' | xargs -I{} dirname {} | sort | jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix={\"board\":$FOLDERS}" >> $GITHUB_OUTPUT
+
+      - name: Print discovered boards
+        run: echo "Found boards ${{ steps.find_boards.outputs.matrix }}"
+
+  # -------------------------------------------------------
+  # Step 2: run fabrication for each discovered board
+  # -------------------------------------------------------
+  Fabrication:
+    needs: discover
+    runs-on: ubuntu-latest
+    container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
+    strategy:
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Generate outputs
+        working-directory: ${{ matrix.board }}
+        run: kibot print_sch gerbers drill gerber_zip pcb_render_top pcb_render_bottom pcb_render_3d_top pcb_render_3d_bottom
+
+      - name: List generated files
+        if: always()
+        run: find ${{ matrix.board }} -type f
+
+      - name: Sanitize board name
+        id: sanitize
+        run: echo "board_name=$(echo '${{ matrix.board }}' | tr '/' '_')" >> $GITHUB_OUTPUT
+
+      - name: Upload fabrication outputs
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: fabrication_output_${{ steps.sanitize.outputs.board_name }}
+          path: ${{ matrix.board }}/fabrication
+
+      - name: Upload renders
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: renders_${{ steps.sanitize.outputs.board_name }}
+          path: ${{ matrix.board }}/renders
+
+      - name: Upload schematic
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: schematic_${{ steps.sanitize.outputs.board_name }}
+          path: ${{ matrix.board }}/schematic
+
+  # -------------------------------------------------------
+  # Step 3: commit all renders and schematics after all
+  #         boards are done - avoids race conditions
+  # -------------------------------------------------------
+  commit:
+    needs: Fabrication
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all renders
+        uses: actions/download-artifact@v4
+        with:
+          pattern: renders_*
+          merge-multiple: false
+          path: downloaded/renders
+
+      - name: Download all schematics
+        uses: actions/download-artifact@v4
+        with:
+          pattern: schematic_*
+          merge-multiple: false
+          path: downloaded/schematics
+
+      - name: Copy files back to hardware folders
+        run: |
+          find downloaded/renders -type f | while read f; do
+            ARTIFACT_FOLDER=$(echo "$f" | cut -d'/' -f3)
+            BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^renders_hardware_//')
+            mkdir -p hardware/$BOARD/renders
+            cp "$f" hardware/$BOARD/renders/
+          done
+          find downloaded/schematics -type f | while read f; do
+            ARTIFACT_FOLDER=$(echo "$f" | cut -d'/' -f3)
+            BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^schematic_hardware_//')
+            mkdir -p hardware/$BOARD/schematic
+            cp "$f" hardware/$BOARD/schematic/
+          done
+
+      - name: Update README with renders
+        run: |
+          # Build the new PCB section
+          PCB_SECTION=""
+          for BOARD_DIR in hardware/*/; do
+            BOARD_NAME=$(basename $BOARD_DIR)
+            # Only process folders that have renders
+            if [ -d "${BOARD_DIR}renders" ]; then
+              PCB_SECTION="${PCB_SECTION}\n## ${BOARD_NAME}\n"
+              PCB_SECTION="${PCB_SECTION}| 2D Top | 2D Bottom |\n"
+              PCB_SECTION="${PCB_SECTION}|--------|----------|\n"
+              PCB_SECTION="${PCB_SECTION}| ![2D Top](${BOARD_DIR}renders/${BOARD_NAME}-top.png) | ![2D Bottom](${BOARD_DIR}renders/${BOARD_NAME}-bottom.png) |\n\n"
+              PCB_SECTION="${PCB_SECTION}| 3D Top | 3D Bottom |\n"
+              PCB_SECTION="${PCB_SECTION}|--------|----------|\n"
+              PCB_SECTION="${PCB_SECTION}| ![3D Top](${BOARD_DIR}renders/${BOARD_NAME}-3D_top.png) | ![3D Bottom](${BOARD_DIR}renders/${BOARD_NAME}-3D_bottom.png) |\n\n"
+            fi
+          done
+
+          # Replace everything between the markers in README.md
+          python3 - <<EOF
+          import re
+          with open('README.md', 'r') as f:
+              content = f.read()
+          new_section = "<!-- PCB_RENDERS_START -->\n${PCB_SECTION}\n<!-- PCB_RENDERS_END -->"
+          content = re.sub(
+              r'<!-- PCB_RENDERS_START -->.*?<!-- PCB_RENDERS_END -->',
+              new_section,
+              content,
+              flags=re.DOTALL
+          )
+          with open('README.md', 'w') as f:
+              f.write(content)
+          EOF
+
+      - name: Commit renders, schematics and README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git fetch origin ${{ github.head_ref }}
+          git checkout ${{ github.head_ref }}
+          git add hardware/
+          git add README.md
+          git diff --cached --quiet || git commit -m "ci: update all renders and schematics [skip ci]"
+          git push origin ${{ github.head_ref }}
