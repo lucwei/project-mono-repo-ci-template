@@ -96,6 +96,8 @@ outputs:
       ray_tracing: true
       orthographic: false
       view: top
+      transparent_background: true
+      auto_crop: true
 
   - name: pcb_render_3d_bottom
     comment: 3D render of PCB bottom side
@@ -105,3 +107,5 @@ outputs:
       ray_tracing: true
       orthographic: false
       view: bottom
+      transparent_background: true
+      auto_crop: true
