@@ -109,3 +109,19 @@ outputs:
       view: bottom
       transparent_background: true
       auto_crop: true
+
+  # -------------------------------------------------------
+  # Interactive BOM
+  # -------------------------------------------------------
+  - name: ibom
+    comment: Interactive HTML BOM
+    type: ibom
+    dir: bom
+    options:
+      column_order:
+        - References
+        - Quantity
+        - Value
+        - Footprint
+        - MPN
+        - Description
