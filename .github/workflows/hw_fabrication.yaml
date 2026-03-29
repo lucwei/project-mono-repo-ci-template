@@ -44,7 +44,7 @@ jobs:
 
       - name: Generate outputs
         working-directory: ${{ matrix.board }}
-        run: kibot print_sch gerbers drill gerber_zip pcb_render_top pcb_render_bottom pcb_render_3d_top pcb_render_3d_bottom
+        run: kibot print_sch gerbers drill gerber_zip pcb_render_top pcb_render_bottom pcb_render_3d_top pcb_render_3d_bottom ibom
 
       - name: List generated files
         if: always()
@@ -75,6 +75,13 @@ jobs:
           name: schematic_${{ steps.sanitize.outputs.board_name }}
           path: ${{ matrix.board }}/schematic
 
+      - name: Upload iBOM
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ibom_${{ steps.sanitize.outputs.board_name }}
+          path: ${{ matrix.board }}/bom
+
   # -------------------------------------------------------
   # Step 3: commit all renders and schematics after all
   #         boards are done - avoids race conditions
@@ -103,6 +110,13 @@ jobs:
           merge-multiple: false
           path: downloaded/schematics
 
+      - name: Download all iBOMs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ibom_*
+          merge-multiple: false
+          path: downloaded/ibom
+
       - name: Copy files back to hardware folders
         run: |
           find downloaded/renders -type f | while read f; do
@@ -116,6 +130,12 @@ jobs:
             BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^schematic_hardware_//')
             mkdir -p hardware/$BOARD/schematic
             cp "$f" hardware/$BOARD/schematic/
+          done
+          find downloaded/ibom -type f | while read f; do
+            ARTIFACT_FOLDER=$(echo "$f" | cut -d'/' -f3)
+            BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^ibom_hardware_//')
+            mkdir -p hardware/$BOARD/bom
+            cp "$f" hardware/$BOARD/bom/
           done
 
       - name: Update README with renders
@@ -161,5 +181,5 @@ jobs:
           git checkout ${{ github.head_ref }}
           git add hardware/
           git add README.md
-          git diff --cached --quiet || git commit -m "ci: update all renders and schematics [skip ci]"
+          git diff --cached --quiet || git commit -m "ci: update renders, schematics, and iBOM [skip ci]"
           git push origin ${{ github.head_ref }}
