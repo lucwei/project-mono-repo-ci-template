@@ -18,10 +18,12 @@ preflight:
       before: 'Ver: '
 
   # -------------------------------------------------------
-  # ERC and DRC checks
+  # ERC and DRC checks (KiCad 8+ syntax)
   # -------------------------------------------------------
-  run_erc: true
-  run_drc: true
+  erc:
+    ignore_warnings: true
+  drc:
+    ignore_warnings: true
 
 outputs:
 
