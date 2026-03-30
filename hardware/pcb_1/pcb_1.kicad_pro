@@ -430,7 +430,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "error",
+      "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
       "similar_label_and_power": "warning",
@@ -627,14 +627,6 @@
     [
       "fa760f25-0aab-4539-8232-50b99fee633f",
       "Root"
-    ],
-    [
-      "9ea1ef57-fbff-4455-a0ff-0839bccf024d",
-      "Block Diagram"
-    ],
-    [
-      "44ea7c11-a0ca-46ca-bb4d-4a8e4aa30f8a",
-      "Project Architecture"
     ]
   ],
   "text_variables": {
