@@ -32,7 +32,7 @@ jobs:
   # Step 2: run fabrication for each discovered board
   # -------------------------------------------------------
   Fabrication:
-    needs: discover
+    needs: [discover, ERC, DRC]
     runs-on: ubuntu-latest
     container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
     strategy:
@@ -87,7 +87,7 @@ jobs:
   #         boards are done - avoids race conditions
   # -------------------------------------------------------
   commit:
-    needs: Fabrication
+    needs: [Fabrication, ERC, DRC]
     runs-on: ubuntu-latest
     permissions:
       contents: write
