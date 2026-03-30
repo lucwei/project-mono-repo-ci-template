@@ -131,3 +131,19 @@ outputs:
         - Footprint
         - MPN
         - Description
+
+  # -------------------------------------------------------
+  # ERC Report
+  # -------------------------------------------------------
+  - name: erc
+    comment: Electrical Rules Check
+    type: erc
+    dir: fabrication/checks
+
+  # -------------------------------------------------------
+  # DRC Report
+  # -------------------------------------------------------
+  - name: drc
+    comment: Design Rules Check
+    type: drc
+    dir: fabrication/checks
