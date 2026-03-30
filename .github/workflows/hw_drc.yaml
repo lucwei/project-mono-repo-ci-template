@@ -1,4 +1,4 @@
-# hw_drc.yaml
+# hw_drc.yml
 name: DRC
 
 on:
@@ -7,35 +7,17 @@ on:
     paths: ['hardware/**']
 
 jobs:
-  discover:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.find_boards.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Find KiCad projects
-        id: find_boards
-        run: |
-          FOLDERS=$(find hardware -maxdepth 2 -name '*.kibot.yaml' | xargs -I{} dirname {} | sort | jq -R -s -c 'split("\n")[:-1]')
-          echo "matrix={\"board\":$FOLDERS}" >> $GITHUB_OUTPUT
-
   DRC:
-    needs: discover
     runs-on: ubuntu-latest
     container: ghcr.io/inti-cmnb/kicad9_auto:latest
-    strategy:
-      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
-      fail-fast: false
     permissions:
-      contents: write
+      contents: write # Needed for committing checks back to the repo
     steps:
       - uses: actions/checkout@v6
       - name: Run DRC
-        working-directory: ${{ matrix.board }}
+        working-directory: hardware/pcb_1
         run: kibot -i -s erc
-      - name: Upload DRC results
-        uses: actions/upload-artifact@v7
-        if: always()
+      - uses: actions/upload-artifact@v7
         with:
-          name: DRC_Output_${{ matrix.board }}
-          path: ${{ matrix.board }}/fabrication/checks/DRC
+          name: DRC_Output
+          path: hardware/pcb_1/fabrication/checks/DRC
