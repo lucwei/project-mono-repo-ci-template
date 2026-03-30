@@ -1824,16 +1824,6 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 92.71) (xy 133.35 92.71)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1c2da63b-1c8c-4d5d-bc7e-cf47ff9c4aa2")
-	)
-	(wire
-		(pts
 			(xy 60.96 129.54) (xy 53.34 129.54)
 		)
 		(stroke
@@ -1844,7 +1834,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 92.71) (xy 130.81 93.98)
+			(xy 133.35 87.63) (xy 133.35 93.98)
 		)
 		(stroke
 			(width 0)
@@ -1874,26 +1864,6 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 104.14) (xy 133.35 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7524bcd5-1326-4cc3-bb85-81e5ad754e6a")
-	)
-	(wire
-		(pts
-			(xy 130.81 104.14) (xy 133.35 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7d0bc1cb-195b-493d-a162-6768b162e5d8")
-	)
-	(wire
-		(pts
 			(xy 76.2 92.71) (xy 99.06 92.71)
 		)
 		(stroke
@@ -1904,7 +1874,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 101.6) (xy 130.81 104.14)
+			(xy 133.35 101.6) (xy 133.35 106.68)
 		)
 		(stroke
 			(width 0)
@@ -1941,16 +1911,6 @@
 			(type default)
 		)
 		(uuid "e50e5a70-73e5-489d-aac0-c518dce9d0cb")
-	)
-	(wire
-		(pts
-			(xy 133.35 92.71) (xy 133.35 87.63)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e684a067-a190-433d-8ec1-1da60850ae52")
 	)
 	(wire
 		(pts
@@ -2922,7 +2882,7 @@
 	)
 	(symbol
 		(lib_id "PCM_JLCPCB-Resistors:0805,1kΩ")
-		(at 130.81 97.79 0)
+		(at 133.35 97.79 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2931,7 +2891,7 @@
 		(fields_autoplaced yes)
 		(uuid "e67cbff7-e8c8-4727-bde8-c8c8afab6f66")
 		(property "Reference" "R1"
-			(at 133.35 97.7899 0)
+			(at 135.89 97.7899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2940,7 +2900,7 @@
 			)
 		)
 		(property "Value" "1kΩ"
-			(at 130.81 97.79 90)
+			(at 133.35 97.79 90)
 			(do_not_autoplace yes)
 			(effects
 				(font
@@ -2949,7 +2909,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:R_0805"
-			(at 129.032 97.79 90)
+			(at 131.572 97.79 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2958,7 +2918,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311800_UNI-ROYAL-Uniroyal-Elec-0805W8F1001T5E_C17513.pdf"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2967,7 +2927,7 @@
 			)
 		)
 		(property "Description" "125mW Thick Film Resistors 150V ±100ppm/°C ±1% 1kΩ 0805 Chip Resistor - Surface Mount ROHS"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2976,7 +2936,7 @@
 			)
 		)
 		(property "LCSC" "C17513"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2985,7 +2945,7 @@
 			)
 		)
 		(property "Stock" "7431283"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2994,7 +2954,7 @@
 			)
 		)
 		(property "Price" "0.005USD"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3003,7 +2963,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3012,7 +2972,7 @@
 			)
 		)
 		(property "Minimum Qty" "20"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3021,7 +2981,7 @@
 			)
 		)
 		(property "Attrition Qty" "10"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3030,7 +2990,7 @@
 			)
 		)
 		(property "Class" "Basic Component"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3039,7 +2999,7 @@
 			)
 		)
 		(property "Category" "Resistors,Chip Resistor - Surface Mount"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3048,7 +3008,7 @@
 			)
 		)
 		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3057,7 +3017,7 @@
 			)
 		)
 		(property "Part" "0805W8F1001T5E"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3066,7 +3026,7 @@
 			)
 		)
 		(property "Resistance" "1kΩ"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3075,7 +3035,7 @@
 			)
 		)
 		(property "Power(Watts)" "125mW"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3084,7 +3044,7 @@
 			)
 		)
 		(property "Type" "Thick Film Resistors"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3093,7 +3053,7 @@
 			)
 		)
 		(property "Overload Voltage (Max)" "150V"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3102,7 +3062,7 @@
 			)
 		)
 		(property "Operating Temperature Range" "-55°C~+155°C"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3111,7 +3071,7 @@
 			)
 		)
 		(property "Tolerance" "±1%"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3120,7 +3080,7 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
-			(at 130.81 97.79 0)
+			(at 133.35 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
