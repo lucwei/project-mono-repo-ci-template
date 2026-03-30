@@ -21,9 +21,9 @@ preflight:
   # ERC and DRC checks (KiCad 8+ syntax)
   # -------------------------------------------------------
   erc:
-    warnings_as_errors: false
+    ignore_warnings: true
   drc:
-    warnings_as_errors: false
+    ignore_warnings: true
 
 outputs:
 
