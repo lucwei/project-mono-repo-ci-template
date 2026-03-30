@@ -17,6 +17,12 @@ preflight:
       command: git describe --tags --always 2>/dev/null || git log --pretty=format:'%h' -n 1
       before: 'Ver: '
 
+  # -------------------------------------------------------
+  # ERC and DRC checks
+  # -------------------------------------------------------
+  run_erc: true
+  run_drc: true
+
 outputs:
 
   # -------------------------------------------------------
@@ -125,3 +131,19 @@ outputs:
         - Footprint
         - MPN
         - Description
+
+  # -------------------------------------------------------
+  # ERC Report
+  # -------------------------------------------------------
+  - name: erc
+    comment: Electrical Rules Check
+    type: erc
+    dir: fabrication/checks
+
+  # -------------------------------------------------------
+  # DRC Report
+  # -------------------------------------------------------
+  - name: drc
+    comment: Design Rules Check
+    type: drc
+    dir: fabrication/checks
