@@ -24,14 +24,4 @@
 | ![3D Top](hardware/pcb_1/renders/pcb_1-3D_top.png) | ![3D Bottom](hardware/pcb_1/renders/pcb_1-3D_bottom.png) |
 
 
-## renders_pcb_1
-| 2D Top | 2D Bottom |
-|--------|----------|
-| ![2D Top](hardware/renders_pcb_1/renders/renders_pcb_1-top.png) | ![2D Bottom](hardware/renders_pcb_1/renders/renders_pcb_1-bottom.png) |
-
-| 3D Top | 3D Bottom |
-|--------|----------|
-| ![3D Top](hardware/renders_pcb_1/renders/renders_pcb_1-3D_top.png) | ![3D Bottom](hardware/renders_pcb_1/renders/renders_pcb_1-3D_bottom.png) |
-
-
 <!-- PCB_RENDERS_END -->
