@@ -18,11 +18,11 @@ preflight:
 
   erc:
     warnings_as_errors: false
-    output: 'checks/%f-erc.txt'
+    output: 'checks/%f-erc.html'
 
   drc:
     warnings_as_errors: false
-    output: 'checks/%f-drc.txt'
+    output: 'checks/%f-drc.html'
 
 outputs:
 
@@ -217,4 +217,12 @@ outputs:
             - layer: F.Courtyard
             - layer: B.Courtyard
           title: Fabrication Drawing
+
+  # -------------------------------------------------------
+  # Output Navigator (HTML index of all generated files)
+  # -------------------------------------------------------
+  - name: navigate_results
+    comment: HTML page linking all generated outputs
+    type: navigate_results
+    dir: web
 

@@ -116,12 +116,33 @@ jobs:
           name: checks_${{ matrix.board.name }}
           path: ${{ matrix.board.path }}/checks
 
+      - name: Upload navigate_results webpage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web_${{ matrix.board.name }}
+          path: ${{ matrix.board.path }}/web
+
+      - name: Write build status
+        if: always()
+        run: |
+          mkdir -p /tmp/status
+          echo "${{ job.status }}" > /tmp/status/result.txt
+
+      - name: Upload build status
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: status_${{ matrix.board.name }}
+          path: /tmp/status/result.txt
+
   # -------------------------------------------------------
   # Step 3: commit all outputs after all boards are done
   #         - avoids race conditions on parallel board jobs
   # -------------------------------------------------------
   commit:
-    needs: Fabrication
+    needs: [discover, Fabrication]
+    if: ${{ always() && needs.Fabrication.result != 'skipped' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -174,6 +195,20 @@ jobs:
           merge-multiple: false
           path: downloaded/checks
 
+      - name: Download all navigate_results webpages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: web_*
+          merge-multiple: false
+          path: downloaded/web
+
+      - name: Download all build statuses
+        uses: actions/download-artifact@v4
+        with:
+          pattern: status_*
+          merge-multiple: false
+          path: downloaded/status
+
       - name: Copy files back to hardware folders
         run: |
           find downloaded/renders -type f | while read f; do
@@ -202,6 +237,28 @@ jobs:
             mkdir -p hardware/$BOARD/checks
             cp "$f" hardware/$BOARD/checks/
           done
+          find downloaded/web -mindepth 2 -type f | while read f; do
+            BOARD=$(echo "$f" | cut -d'/' -f3 | sed 's/^web_//')
+            REL=$(echo "$f" | cut -d'/' -f4-)
+            mkdir -p "hardware/$BOARD/web/$(dirname "$REL")"
+            cp "$f" "hardware/$BOARD/web/$REL"
+          done
+
+          # Generate per-board fabrication status badges
+          for STATUS_DIR in downloaded/status/*/; do
+            BOARD=$(basename "$STATUS_DIR" | sed 's/^status_//')
+            STATUS=$(cat "${STATUS_DIR}result.txt" 2>/dev/null | tr -d '[:space:]' || echo "unknown")
+            case "$STATUS" in
+              success) MSG="passing"; COLOR="brightgreen" ;;
+              failure) MSG="failing";  COLOR="red" ;;
+              *)        MSG="unknown"; COLOR="lightgrey" ;;
+            esac
+            mkdir -p "hardware/$BOARD"
+            curl -sf -o "hardware/$BOARD/fabrication-badge.svg" \
+              "https://img.shields.io/badge/fabrication-${MSG}-${COLOR}.svg" || \
+            printf '<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20"><rect width="130" height="20" fill="#555" rx="3"/><rect x="82" width="48" height="20" fill="%s" rx="3"/><rect x="82" width="4" height="20" fill="%s"/><g fill="#fff" font-family="DejaVu Sans,sans-serif" font-size="11" text-anchor="middle"><text x="41" y="14">fabrication</text><text x="106" y="14">%s</text></g></svg>' \
+              "${COLOR}" "${COLOR}" "${MSG}" > "hardware/$BOARD/fabrication-badge.svg"
+          done
 
       - name: Update README with renders
         run: |
@@ -212,6 +269,7 @@ jobs:
             # Only process folders that have renders
             if [ -d "${BOARD_DIR}renders" ]; then
               PCB_SECTION="${PCB_SECTION}\n## ${BOARD_NAME}\n"
+              PCB_SECTION="${PCB_SECTION}![Fabrication](${BOARD_DIR}fabrication-badge.svg)\n\n"
               PCB_SECTION="${PCB_SECTION}| 2D Top | 2D Bottom |\n"
               PCB_SECTION="${PCB_SECTION}|--------|----------|\n"
               PCB_SECTION="${PCB_SECTION}| ![2D Top](${BOARD_DIR}renders/${BOARD_NAME}-top.png) | ![2D Bottom](${BOARD_DIR}renders/${BOARD_NAME}-bottom.png) |\n\n"
@@ -244,7 +302,7 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git fetch origin ${{ steps.branch.outputs.branch }}
           git checkout ${{ steps.branch.outputs.branch }}
-          git add hardware/*/renders hardware/*/schematic hardware/*/bom hardware/*/fabrication hardware/*/checks
+          git add hardware/*/renders hardware/*/schematic hardware/*/bom hardware/*/fabrication hardware/*/checks hardware/*/web hardware/*/fabrication-badge.svg
           git add README.md
           git diff --cached --quiet || git commit -m "ci: update renders, schematics, and iBOM [skip ci]"
           git push origin ${{ steps.branch.outputs.branch }}
