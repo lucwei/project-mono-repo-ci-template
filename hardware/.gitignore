@@ -17,10 +17,9 @@ fp-info-cache
 __pycache__/
 *.pyc
 
-# CI/CD generated outputs
-**/Fabrication/
-**/Checks/
-**/Schematic/
+# KiBot working files
+*.kibot.yaml.bak
+kibot_run.log
 
 # OS files
 .DS_Store

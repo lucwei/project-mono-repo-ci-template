@@ -1,29 +1,53 @@
-# hw_fabrication.yml
+# hw_fabrication.yaml
 name: Fabrication
 
 on:
+# ---------------------------------------------------------
+# Trigger on PRs to main that modify hardware files and
+# also allow manual triggering
+# ---------------------------------------------------------
   workflow_dispatch:
   pull_request:
     branches: [main]
     paths: ['hardware/**']
 
-jobs:
 
+jobs:
   # -------------------------------------------------------
   # Step 1: discover all KiCad projects in hardware/
+  #   - looks for hardware/<name>/<name>.kicad_pro files
+  #   - on pull_request: only includes boards with changed files
+  #   - on workflow_dispatch: includes all boards
   # -------------------------------------------------------
   discover:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.find_boards.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Find KiCad projects
         id: find_boards
         run: |
-          FOLDERS=$(find hardware -maxdepth 2 -name '*.kibot.yaml' | xargs -I{} dirname {} | sort | jq -R -s -c 'split("\n")[:-1]')
-          echo "matrix={\"board\":$FOLDERS}" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          fi
+
+          BOARDS="[]"
+          for dir in hardware/*/; do
+            name=$(basename "$dir")
+            if [ -f "${dir}${name}.kicad_pro" ]; then
+              if [ "${{ github.event_name }}" = "workflow_dispatch" ] || \
+                 echo "$CHANGED" | grep -q "^hardware/${name}/"; then
+                BOARDS=$(echo "$BOARDS" | jq --arg n "$name" --arg p "${dir%/}" '. + [{"name": $n, "path": $p}]')
+              fi
+            fi
+          done
+
+          MATRIX=$(jq -cn --argjson b "$BOARDS" '{"board": $b}')
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
       - name: Print discovered boards
         run: echo "Found boards ${{ steps.find_boards.outputs.matrix }}"
@@ -32,7 +56,8 @@ jobs:
   # Step 2: run fabrication for each discovered board
   # -------------------------------------------------------
   Fabrication:
-    needs: [discover, ERC, DRC]
+    needs: discover
+    if: ${{ fromJson(needs.discover.outputs.matrix).board[0] != null }}
     runs-on: ubuntu-latest
     container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
     strategy:
@@ -40,51 +65,60 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Generate outputs
-        working-directory: ${{ matrix.board }}
-        run: kibot print_sch gerbers drill gerber_zip pcb_render_top pcb_render_bottom pcb_render_3d_top pcb_render_3d_bottom ibom
+        working-directory: ${{ matrix.board.path }}
+        run: |
+          kibot \
+            -c ../../.kibot/kibot.yaml \
+            -b ${{ matrix.board.name }}.kicad_pcb \
+            -e ${{ matrix.board.name }}.kicad_sch
 
       - name: List generated files
         if: always()
-        run: find ${{ matrix.board }} -type f
-
-      - name: Sanitize board name
-        id: sanitize
-        run: echo "board_name=$(echo '${{ matrix.board }}' | tr '/' '_')" >> $GITHUB_OUTPUT
-
-      - name: Upload fabrication outputs
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: fabrication_output_${{ steps.sanitize.outputs.board_name }}
-          path: ${{ matrix.board }}/fabrication
+        run: find ${{ matrix.board.path }} -type f
 
       - name: Upload renders
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: renders_${{ steps.sanitize.outputs.board_name }}
-          path: ${{ matrix.board }}/renders
+          name: renders_${{ matrix.board.name }}
+          path: ${{ matrix.board.path }}/renders
 
       - name: Upload schematic
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: schematic_${{ steps.sanitize.outputs.board_name }}
-          path: ${{ matrix.board }}/schematic
+          name: schematic_${{ matrix.board.name }}
+          path: ${{ matrix.board.path }}/schematic
 
-      - name: Upload iBOM
-        uses: actions/upload-artifact@v7
+      - name: Upload iBOM and BOMs
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ibom_${{ steps.sanitize.outputs.board_name }}
-          path: ${{ matrix.board }}/bom
+          name: ibom_${{ matrix.board.name }}
+          path: ${{ matrix.board.path }}/bom
+
+      - name: Upload fabrication outputs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fabrication_output_${{ matrix.board.name }}
+          path: ${{ matrix.board.path }}/fabrication
+
+      - name: Upload ERC/DRC checks
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: checks_${{ matrix.board.name }}
+          path: ${{ matrix.board.path }}/checks
 
   # -------------------------------------------------------
-  # Step 3: commit all renders and schematics after all
-  #         boards are done - avoids race conditions
+  # Step 3: commit all outputs after all boards are done
+  #         - avoids race conditions on parallel board jobs
   # -------------------------------------------------------
   commit:
     needs: Fabrication
@@ -92,9 +126,18 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detect branch
+        id: branch
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "branch=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Download all renders
         uses: actions/download-artifact@v4
@@ -110,32 +153,54 @@ jobs:
           merge-multiple: false
           path: downloaded/schematics
 
-      - name: Download all iBOMs
+      - name: Download all iBOMs and BOMs
         uses: actions/download-artifact@v4
         with:
           pattern: ibom_*
           merge-multiple: false
           path: downloaded/ibom
 
+      - name: Download all fabrication outputs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: fabrication_output_*
+          merge-multiple: false
+          path: downloaded/fabrication
+
+      - name: Download all ERC/DRC checks
+        uses: actions/download-artifact@v4
+        with:
+          pattern: checks_*
+          merge-multiple: false
+          path: downloaded/checks
+
       - name: Copy files back to hardware folders
         run: |
           find downloaded/renders -type f | while read f; do
-            ARTIFACT_FOLDER=$(echo "$f" | cut -d'/' -f3)
-            BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^renders_hardware_//')
+            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
             mkdir -p hardware/$BOARD/renders
             cp "$f" hardware/$BOARD/renders/
           done
           find downloaded/schematics -type f | while read f; do
-            ARTIFACT_FOLDER=$(echo "$f" | cut -d'/' -f3)
-            BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^schematic_hardware_//')
+            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
             mkdir -p hardware/$BOARD/schematic
             cp "$f" hardware/$BOARD/schematic/
           done
           find downloaded/ibom -type f | while read f; do
-            ARTIFACT_FOLDER=$(echo "$f" | cut -d'/' -f3)
-            BOARD=$(echo "$ARTIFACT_FOLDER" | sed 's/^ibom_hardware_//')
+            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
             mkdir -p hardware/$BOARD/bom
             cp "$f" hardware/$BOARD/bom/
+          done
+          find downloaded/fabrication -mindepth 1 -type f | while read f; do
+            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
+            REL="${f#downloaded/fabrication/*/}"
+            mkdir -p "hardware/$BOARD/fabrication/$(dirname "$REL")"
+            cp "$f" "hardware/$BOARD/fabrication/$REL"
+          done
+          find downloaded/checks -type f | while read f; do
+            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
+            mkdir -p hardware/$BOARD/checks
+            cp "$f" hardware/$BOARD/checks/
           done
 
       - name: Update README with renders
@@ -172,14 +237,14 @@ jobs:
               f.write(content)
           EOF
 
-      - name: Commit renders, schematics and README
+      - name: Commit outputs and README
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git fetch origin ${{ github.head_ref }}
-          git checkout ${{ github.head_ref }}
-          git add hardware/
+          git fetch origin ${{ steps.branch.outputs.branch }}
+          git checkout ${{ steps.branch.outputs.branch }}
+          git add hardware/*/renders hardware/*/schematic hardware/*/bom hardware/*/fabrication hardware/*/checks
           git add README.md
           git diff --cached --quiet || git commit -m "ci: update renders, schematics, and iBOM [skip ci]"
-          git push origin ${{ github.head_ref }}
+          git push origin ${{ steps.branch.outputs.branch }}
