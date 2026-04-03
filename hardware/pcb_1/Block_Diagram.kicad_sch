@@ -1,0 +1,197 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "e2a2bf9a-71d9-401f-815c-1da56cdcd0ab")
+	(paper "A3")
+	(lib_symbols)
+	(polyline
+		(pts
+			(xy 179.3928 118.1788) (xy 158.2261 118.1788) (xy 158.2261 97.0121) (xy 179.3928 97.0121) (xy 179.3928 118.1788)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 09e2c9a5-e91f-4c3f-9c34-6f2a0caa73af)
+	)
+	(polyline
+		(pts
+			(xy 213.2277 125.5871) (xy 211.3756 126.5132) (xy 211.8386 125.5871) (xy 211.3756 124.6611) (xy 213.2277 125.5871)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(fill
+			(type color)
+			(color 128 128 128 1)
+		)
+		(uuid 22eea3f4-3111-47f1-8d7f-4f6f704549ce)
+	)
+	(polyline
+		(pts
+			(xy 224.1074 148.3095) (xy 223.1813 146.4575) (xy 224.1074 146.9205) (xy 225.0334 146.4575) (xy 224.1074 148.3095)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(fill
+			(type color)
+			(color 128 128 128 1)
+		)
+		(uuid 51fb207c-1ff1-4665-9b71-42d61ef6b438)
+	)
+	(polyline
+		(pts
+			(xy 236.3761 125.5871) (xy 236.8391 126.5132) (xy 234.987 125.5871) (xy 236.8391 124.6611) (xy 236.3761 125.5871)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(fill
+			(type color)
+			(color 128 128 128 1)
+		)
+		(uuid adaf53d1-6838-41c5-95dc-e23375ce0c2d)
+	)
+	(polyline
+		(pts
+			(xy 234.6907 136.1705) (xy 213.524 136.1705) (xy 213.524 115.0038) (xy 234.6907 115.0038) (xy 234.6907 136.1705)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid af077149-83f4-4762-aac2-7d0a03bac5ea)
+	)
+	(polyline
+		(pts
+			(xy 234.6907 169.7725) (xy 213.524 169.7725) (xy 213.524 148.6059) (xy 234.6907 148.6059) (xy 234.6907 169.7725)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid b3555301-5638-4002-8b28-f28e0299a239)
+	)
+	(polyline
+		(pts
+			(xy 252.2855 172.5507) (xy 155.448 172.5507) (xy 155.448 94.234) (xy 252.2855 94.234) (xy 252.2855 172.5507)
+		)
+		(stroke
+			(width -0.0001)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid d99a993c-3fa9-4360-91b2-16324c1722a1)
+	)
+	(text "Block Diagram"
+		(exclude_from_sim no)
+		(at 202.946 33.274 0)
+		(effects
+			(font
+				(face "Arial")
+				(size 10.16 10.16)
+				(color 132 0 0 1)
+			)
+		)
+		(uuid "6f6e65f6-039a-4693-81a3-e7da8103b0ae")
+	)
+	(polyline
+		(pts
+			(xy 224.1074 136.1705) (xy 224.1074 146.9205)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "116b7dcd-940f-4517-be8d-d2a3672e94d5")
+	)
+	(polyline
+		(pts
+			(xy 196.4584 107.5955) (xy 196.4584 125.5871)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "13b93b09-cb91-4613-93e7-429a6ef4195b")
+	)
+	(polyline
+		(pts
+			(xy 247.3907 125.5871) (xy 236.3761 125.5871)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "19ab2a16-5096-4ebe-86f0-5f603f2c10f9")
+	)
+	(polyline
+		(pts
+			(xy 234.6907 159.1892) (xy 247.3907 159.1892)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "256c57fe-00dd-40d2-8658-c06b6b147ec3")
+	)
+	(polyline
+		(pts
+			(xy 247.3907 159.1892) (xy 247.3907 125.5871)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "278b5922-5890-4afe-8810-e9cb059caee4")
+	)
+	(polyline
+		(pts
+			(xy 196.4584 125.5871) (xy 211.8386 125.5871)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "cc5af0d4-d300-4469-916a-9d755f7b16cc")
+	)
+	(polyline
+		(pts
+			(xy 179.3928 107.5955) (xy 196.4584 107.5955)
+		)
+		(stroke
+			(width 0)
+			(type solid)
+			(color 128 128 128 1)
+		)
+		(uuid "e8bdb0e0-d398-44c9-9443-2ad4c01f756c")
+	)
+)

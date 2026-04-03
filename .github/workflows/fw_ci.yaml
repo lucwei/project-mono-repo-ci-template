@@ -1,0 +1,70 @@
+# fw_ci.yml
+name: Firmware CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['firmware/**']
+
+jobs:
+
+  # -------------------------------------------------------
+  # Step 1: Build and generate artifacts
+  # -------------------------------------------------------
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/stm32-cmake/stm32-cmake:latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Configure CMake
+        working-directory: firmware
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=cmake/stm32_gcc.cmake
+
+      - name: Build
+        working-directory: firmware
+        run: cmake --build build --parallel
+
+      - name: Generate .hex and .bin
+        working-directory: firmware
+        run: |
+          arm-none-eabi-objcopy -O ihex   build/*.elf build/firmware.hex
+          arm-none-eabi-objcopy -O binary build/*.elf build/firmware.bin
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware_build
+          path: |
+            firmware/build/firmware.hex
+            firmware/build/firmware.bin
+            firmware/build/*.elf
+
+  # -------------------------------------------------------
+  # Step 2: Static analysis
+  # -------------------------------------------------------
+  static_analysis:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install cppcheck
+        run: sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck
+        working-directory: firmware
+        run: |
+          cppcheck \
+            --enable=all \
+            --error-exitcode=1 \
+            --suppress=missingIncludeSystem \
+            --inline-suppr \
+            -I include/ \
+            src/

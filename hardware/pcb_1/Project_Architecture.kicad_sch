@@ -1,0 +1,92 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "09914bb4-8711-4654-add2-f4784cdbb26e")
+	(paper "A3")
+	(lib_symbols)
+	(sheet
+		(at 135.636 130.048)
+		(size 26.416 23.368)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "8b1e27c8-2f03-49d0-a288-d247b26669f6")
+		(property "Sheetname" "LED PCB"
+			(at 135.636 129.3364 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "led_pcb.kicad_sch"
+			(at 135.636 154.0006 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "pcb_1"
+				(path "/fa760f25-0aab-4539-8232-50b99fee633f/44ea7c11-a0ca-46ca-bb4d-4a8e4aa30f8a"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 77.978 130.556)
+		(size 34.798 23.368)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "9577634c-3310-43b2-837e-d55d858b1924")
+		(property "Sheetname" "usb_connector_pcb"
+			(at 77.978 129.8444 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "usb_connector_pcb.kicad_sch"
+			(at 77.978 154.5086 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "pcb_1"
+				(path "/fa760f25-0aab-4539-8232-50b99fee633f/44ea7c11-a0ca-46ca-bb4d-4a8e4aa30f8a"
+					(page "4")
+				)
+			)
+		)
+	)
+)

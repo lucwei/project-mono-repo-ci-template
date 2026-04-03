@@ -1,0 +1,13 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# KiCad auto-save
+*-bak/
+*.kicad_pcb-bak
+*.kicad_sch-bak
+\#auto_saved_files#
+
+# KiBot working files
+*.kibot.yaml.bak
+kibot_run.log

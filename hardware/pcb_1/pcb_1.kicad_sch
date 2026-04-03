@@ -1,0 +1,131 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "fa760f25-0aab-4539-8232-50b99fee633f")
+	(paper "A3")
+	(lib_symbols)
+	(text "Block Diagram"
+		(exclude_from_sim no)
+		(at 67.818 27.178 0)
+		(effects
+			(font
+				(face "Arial")
+				(size 10.16 10.16)
+				(color 132 0 0 1)
+			)
+		)
+		(uuid "6d090fee-5f1e-4682-9bb2-c05d4978af22")
+	)
+	(sheet
+		(at 139.7 187.96)
+		(size 12.7 5.334)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "44ea7c11-a0ca-46ca-bb4d-4a8e4aa30f8a")
+		(property "Sheetname" "Project Architecture"
+			(at 139.7 187.2484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Project_Architecture.kicad_sch"
+			(at 139.7 193.8786 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "pcb_1"
+				(path "/fa760f25-0aab-4539-8232-50b99fee633f"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 113.03 188.214)
+		(size 19.812 5.08)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "9ea1ef57-fbff-4455-a0ff-0839bccf024d")
+		(property "Sheetname" "Block Diagram"
+			(at 113.03 187.5024 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Block_Diagram.kicad_sch"
+			(at 113.03 193.8786 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "pcb_1"
+				(path "/fa760f25-0aab-4539-8232-50b99fee633f"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+	(embedded_files
+		(file
+			(name "drawing_sheet_template.kicad_wks")
+			(type worksheet)
+			(data |KLUv/WDkCVUWAMafZCEA1TZqxSYpBF8GGYp3dZwAOIwSc2fW4zryFCaz9P8TCiZaAFQAXgAf4k3q
+				fw2a+jucvGn1MnP2R3q/wWPh1op658UswmUeC7eqjkv5/BF+AgAQMEGPT1opKI/a+rOIvdGkfOv/
+				Ni4xhwAIFLBaq2Wp9VLnc+MQARA4PyJP/ML8IQQZyV6nIAjSagECX+pN9Wv91CZVKf8RfvAvta51
+				ekmjHZb5P2zivXG5dfijU6fUJ9Qj6Hj8/I4772IJ0vtzyr/EJKlD69bFEl+W01r99/cnRTkmvzIY
+				dzjB4SQQN8r/I7fe+MbmZ7lolsxSypw4atAvu2W0SwhfMIzySK0uV9BKqWzcRct4jYyxRUyDW12n
+				tSoqhCewk9ZlDU/DcNxmGvgC/9fYe5M2/hKHTtrkP0Gea70GgYK1CVpZCMwqrqoa3N6O0upyS29l
+				ERAug3jd9rAIexWWtS6rsCrCUqt2FG1CKj+T1AxqNZTMMqkwEpAus3SaBuEwzKquSUbRJJsjO8I8
+				fp89UdGqSbqtGz93torZP4CLoBFFhtRMiSRJChnmkESE6FgHOgZfg7oS2FNagROCEYXZ5voV3zHA
+				lkOkt4LuCbaZI9sjFBoUQDrkpnOVtG0pJcJYQokwiG30euq8w8MghbnvB2k7WEO6uMIWmeZPP8bK
+				BMHmIXNrnhtnCzJA6FZnd1am1WaZDFsiv4ACrdRalR3MlD24rLcIgRFCtQZy67li7aF4EKywv5Qg
+				FncURwmwrwVzgVmfnSMQ9KIrZbElqxdJjmYp2T+D1zBsRA8byxR8BBMh0wk63xg6wgC9zMz8KN4w
+				IYdE/JLcqQwlH844ek9yYZT57eEtsxQooco8OmQHRG2N7EQ4SIj2Cq/ikGsH1eXXvLlsOnxZpl4U
+				8KN2uO4Wk+jQqU3AssHqsA9d6/oaHduldnqXKKQB//HeNy2CNj5oFQ==|
+			)
+			(checksum "8B5BD558793D4A80B990D13B4A1FFA1F")
+		)
+	)
+)

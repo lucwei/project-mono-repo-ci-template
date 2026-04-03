@@ -1,0 +1,228 @@
+kibot:
+  version: 1
+
+preflight:
+  # -------------------------------------------------------
+  # Auto-generate PCB silkscreen metadata from git
+  # -------------------------------------------------------
+  set_text_variables:
+    - name: GIT_HASH
+      command: git log --pretty=format:'%h' -n 1
+      before: 'Git: '
+    - name: BUILD_DATE
+      command: date +%Y-%m-%d
+      before: 'Built: '
+    - name: GIT_TAG
+      command: git describe --tags --always 2>/dev/null || git log --pretty=format:'%h' -n 1
+      before: 'Ver: '
+
+  erc:
+    warnings_as_errors: false
+    output: 'documentation/checks/%f-erc.html'
+
+  drc:
+    warnings_as_errors: false
+    output: 'documentation/checks/%f-drc.html'
+
+outputs:
+
+  # -------------------------------------------------------
+  # Schematic PDF
+  # -------------------------------------------------------
+  - name: print_sch
+    comment: Schematic in PDF format
+    type: pdf_sch_print
+    dir: documentation/schematic
+
+  # -------------------------------------------------------
+  # Gerbers
+  # -------------------------------------------------------
+  - name: gerbers
+    comment: Gerber files for fabrication
+    type: gerber
+    dir: documentation/fabrication/gerbers
+    layers:
+      - F.Cu
+      - B.Cu
+      - F.Silkscreen
+      - B.Silkscreen
+      - F.Mask
+      - B.Mask
+      - F.Paste
+      - B.Paste
+      - Edge.Cuts
+      - F.Courtyard
+      - B.Courtyard
+
+  - name: drill
+    comment: Drill files
+    type: excellon
+    dir: documentation/fabrication/gerbers
+
+  - name: gerber_zip
+    comment: Zip of all gerbers + drill files
+    type: compress
+    dir: documentation/fabrication
+    options:
+      files:
+        - from_output: gerbers
+        - from_output: drill
+
+  # -------------------------------------------------------
+  # Bill of Materials
+  # -------------------------------------------------------
+  - name: bom_csv
+    comment: Bill of Materials in CSV format
+    type: bom
+    dir: documentation/bom
+    options:
+      format: CSV
+      output: '%f-bom.%x'
+      columns:
+        - References
+        - Quantity Per PCB
+        - Value
+        - Footprint
+        - field: MPN
+          name: MPN
+        - Description
+
+  - name: bom_xlsx
+    comment: Bill of Materials in XLSX format
+    type: bom
+    dir: documentation/bom
+    options:
+      format: XLSX
+      output: '%f-bom.%x'
+      columns:
+        - References
+        - Quantity Per PCB
+        - Value
+        - Footprint
+        - field: MPN
+          name: MPN
+        - Description
+
+  # -------------------------------------------------------
+  # Pick & Place / CPL
+  # -------------------------------------------------------
+  - name: cpl
+    comment: Component placement list for assembly
+    type: position
+    dir: documentation/fabrication
+    options:
+      format: CSV
+      output: '%f-cpl.%x'
+      units: millimeters
+      separate_files_for_front_and_back: false
+
+  # -------------------------------------------------------
+  # Interactive BOM
+  # -------------------------------------------------------
+  - name: ibom
+    comment: Interactive HTML BOM
+    type: ibom
+    dir: documentation/bom
+    options:
+      column_order:
+        - References
+        - Quantity
+        - Value
+        - Footprint
+        - MPN
+        - Description
+
+  # -------------------------------------------------------
+  # PCB Render (2D)
+  # -------------------------------------------------------
+  - name: pcb_render_top
+    comment: 2D render of PCB top side
+    type: pcbdraw
+    dir: documentation/renders
+    options:
+      format: png
+      dpi: 300
+      style: set-blue-enig
+      show_components: all
+
+  - name: pcb_render_bottom
+    comment: 2D render of PCB bottom side
+    type: pcbdraw
+    dir: documentation/renders
+    options:
+      format: png
+      dpi: 300
+      style: set-blue-enig
+      show_components: all
+      bottom: true
+
+  # -------------------------------------------------------
+  # PCB Render (3D)
+  # -------------------------------------------------------
+  - name: pcb_render_3d_top
+    comment: 3D render of PCB top side
+    type: render_3d
+    dir: documentation/renders
+    options:
+      ray_tracing: true
+      orthographic: false
+      view: top
+      transparent_background: true
+      auto_crop: true
+
+  - name: pcb_render_3d_bottom
+    comment: 3D render of PCB bottom side
+    type: render_3d
+    dir: documentation/renders
+    options:
+      ray_tracing: true
+      orthographic: false
+      view: bottom
+      transparent_background: true
+      auto_crop: true
+
+  # -------------------------------------------------------
+  # Assembly & Fabrication PDFs
+  # -------------------------------------------------------
+  - name: assembly_pdf
+    comment: Assembly drawing with component placement and reference designators
+    type: pcb_print
+    dir: documentation/fabrication
+    options:
+      output: '%f-assembly.%x'
+      pages:
+        - layers:
+            - layer: F.Cu
+            - layer: B.Cu
+            - layer: F.Silkscreen
+            - layer: B.Silkscreen
+            - layer: F.Fab
+            - layer: B.Fab
+            - layer: Edge.Cuts
+          title: Assembly Drawing
+
+  - name: fabrication_pdf
+    comment: Fabrication drawing with board outline and drill tables
+    type: pcb_print
+    dir: documentation/fabrication
+    options:
+      output: '%f-fabrication.%x'
+      pages:
+        - layers:
+            - layer: F.Cu
+            - layer: B.Cu
+            - layer: Edge.Cuts
+            - layer: F.Mask
+            - layer: B.Mask
+            - layer: F.Courtyard
+            - layer: B.Courtyard
+          title: Fabrication Drawing
+
+  # -------------------------------------------------------
+  # Output Navigator (HTML index of all generated files)
+  # -------------------------------------------------------
+  - name: navigate_results
+    comment: HTML page linking all generated outputs
+    type: navigate_results
+    dir: documentation/web
+

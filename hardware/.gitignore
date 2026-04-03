@@ -1,0 +1,26 @@
+# KiCad auto-generated files
+*.000
+*.bak
+*.bck
+*-backups/
+*_autosave-*
+fp-info-cache
+*.lck
+
+# KiCad netlist (generated from schematic)
+*.net
+
+# KiCad 3D cache
+*.kicad_prl
+
+# Python cache
+__pycache__/
+*.pyc
+
+# KiBot working files
+*.kibot.yaml.bak
+kibot_run.log
+
+# OS files
+.DS_Store
+Thumbs.db
