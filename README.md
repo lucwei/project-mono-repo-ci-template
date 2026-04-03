@@ -2,8 +2,6 @@
 
 ## Hardware Status
 
-![ERC](https://github.com/lucwei/project-mono-repo-ci-template/actions/workflows/hw_erc.yaml/badge.svg?branch=main)
-![DRC](https://github.com/lucwei/project-mono-repo-ci-template/actions/workflows/hw_drc.yaml/badge.svg?branch=main)
 ![Fabrication](https://github.com/lucwei/project-mono-repo-ci-template/actions/workflows/hw_fabrication.yaml/badge.svg?branch=main)
 
 ## Firmware Status
