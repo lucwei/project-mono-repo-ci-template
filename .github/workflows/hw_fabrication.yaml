@@ -177,28 +177,28 @@ jobs:
       - name: Copy files back to hardware folders
         run: |
           find downloaded/renders -type f | while read f; do
-            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
+            BOARD=$(echo "$f" | cut -d'/' -f3 | sed 's/^renders_//')
             mkdir -p hardware/$BOARD/renders
             cp "$f" hardware/$BOARD/renders/
           done
           find downloaded/schematics -type f | while read f; do
-            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
+            BOARD=$(echo "$f" | cut -d'/' -f3 | sed 's/^schematic_//')
             mkdir -p hardware/$BOARD/schematic
             cp "$f" hardware/$BOARD/schematic/
           done
           find downloaded/ibom -type f | while read f; do
-            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
+            BOARD=$(echo "$f" | cut -d'/' -f3 | sed 's/^ibom_//')
             mkdir -p hardware/$BOARD/bom
             cp "$f" hardware/$BOARD/bom/
           done
-          find downloaded/fabrication -mindepth 1 -type f | while read f; do
-            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
-            REL="${f#downloaded/fabrication/*/}"
+          find downloaded/fabrication -mindepth 2 -type f | while read f; do
+            BOARD=$(echo "$f" | cut -d'/' -f3 | sed 's/^fabrication_output_//')
+            REL=$(echo "$f" | cut -d'/' -f4-)
             mkdir -p "hardware/$BOARD/fabrication/$(dirname "$REL")"
             cp "$f" "hardware/$BOARD/fabrication/$REL"
           done
           find downloaded/checks -type f | while read f; do
-            BOARD=$(basename "$(dirname "$f" | cut -d'/' -f3)")
+            BOARD=$(echo "$f" | cut -d'/' -f3 | sed 's/^checks_//')
             mkdir -p hardware/$BOARD/checks
             cp "$f" hardware/$BOARD/checks/
           done
