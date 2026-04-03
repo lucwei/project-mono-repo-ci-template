@@ -18,9 +18,11 @@ preflight:
 
   erc:
     warnings_as_errors: false
+    output: 'checks/%f-erc.txt'
 
   drc:
     warnings_as_errors: false
+    output: 'checks/%f-drc.txt'
 
 outputs:
 
@@ -216,19 +218,3 @@ outputs:
             - layer: B.Courtyard
           title: Fabrication Drawing
 
-  # -------------------------------------------------------
-  # ERC / DRC Reports
-  # -------------------------------------------------------
-  - name: erc_report
-    comment: Electrical Rules Check report
-    type: erc
-    dir: checks
-    options:
-      output: '%f-erc.%x'
-
-  - name: drc_report
-    comment: Design Rules Check report
-    type: drc
-    dir: checks
-    options:
-      output: '%f-drc.%x'
