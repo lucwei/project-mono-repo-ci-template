@@ -11,3 +11,5 @@ Thumbs.db
 # KiBot working files
 *.kibot.yaml.bak
 kibot_run.log
+# draw.io backups
+*.drawio.bkp
