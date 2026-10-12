@@ -2060,7 +2060,7 @@
 	)
 	(gr_line
 		(start 150 100)
-		(end 106 100)
+		(end 105.5 100)
 		(stroke
 			(width 0.05)
 			(type default)
