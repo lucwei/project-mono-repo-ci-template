@@ -1,71 +1,64 @@
-# Hardware Mono-Repo CI Template
+# project-mono-repo-ci-template
 
-A GitHub template for hardware projects that keep **KiCad hardware** and **STM32 firmware** in one repository, with CI that builds, checks, and documents both on every pull request.
+My starting point for hardware projects. KiCad boards and STM32 firmware live in the same repo, and GitHub Actions takes care of the boring parts: fabrication files, renders, BOMs, ERC/DRC, and firmware builds.
 
-> [!NOTE]
-> You are reading the template's showcase README (`.github/README.md`). Projects created from this template use the root [`README.md`](../README.md) instead. See [Getting started](#getting-started).
+This README only exists on the template repo. New projects get the root [`README.md`](../README.md).
 
-## What you get
+## What the CI does
 
-| | |
-|---|---|
-| **Fabrication CI** | Every PR touching `hardware/` runs [KiBot](https://github.com/INTI-CMNB/KiBot) on each changed board: ERC/DRC, schematic PDF, Gerbers + drill, BOM and interactive BOM, pick-and-place, assembly drawings, 2D/3D renders, and a browsable results page. |
-| **Auto-committed docs** | Generated outputs are committed back to the PR branch under `hardware/<board>/documentation/`, so every revision has its manufacturing files versioned with it. |
-| **Live README** | Renders and a per-board fabrication status badge are injected into the project README automatically. |
-| **Multi-board support** | Any `hardware/<name>/<name>.kicad_pro` is picked up as a board and built in parallel. |
-| **Firmware CI** | Every PR touching `firmware/` is built with CMake + `arm-none-eabi-gcc` (via [stm32-cmake](https://github.com/ObKo/stm32-cmake)), exported as `.elf`/`.hex`/`.bin` artifacts, and checked with `cppcheck`. |
-| **Git-stamped boards** | `GIT_HASH`, `GIT_TAG` and `BUILD_DATE` text variables are set at build time, so the silkscreen can show exactly which commit a board came from. |
+**Hardware** (`hardware/**`, on PRs to `main` or run manually)
 
-## Example output
+KiBot runs on every board that changed in the PR and generates:
 
-This is what the CI produced for the demo board `pcb_1`:
+- ERC/DRC reports
+- schematic PDF
+- Gerbers, drill files, pick-and-place, and assembly drawings
+- BOM (csv/xlsx) and an interactive BOM
+- 2D and 3D renders
+- a KiBot results page for browsing everything
+
+The outputs are committed back to the PR branch under `hardware/<board>/documentation/`. The renders and a fabrication badge are written into the project README between the `PCB_RENDERS` markers.
+
+A board is any folder `hardware/<name>/` that contains `<name>.kicad_pro`. Boards build in parallel.
+
+The KiBot config also sets `GIT_HASH`, `GIT_TAG` and `BUILD_DATE` text variables. Put them on the silkscreen and every board shows which commit it came from.
+
+**Firmware** (`firmware/**`, on PRs to `main`)
+
+Builds with CMake and arm-none-eabi-gcc using the stm32-cmake container, uploads `.elf`/`.hex`/`.bin` as artifacts, and runs cppcheck.
+
+## Example
+
+Output for the demo board `pcb_1`:
 
 ![Fabrication](../hardware/pcb_1/documentation/fabrication-badge.svg)
 
-| 2D Top | 2D Bottom |
-|--------|-----------|
-| ![2D Top](../hardware/pcb_1/documentation/renders/pcb_1-top.png) | ![2D Bottom](../hardware/pcb_1/documentation/renders/pcb_1-bottom.png) |
-
-| 3D Top | 3D Bottom |
-|--------|-----------|
+| Top | Bottom |
+|-----|--------|
+| ![Top](../hardware/pcb_1/documentation/renders/pcb_1-top.png) | ![Bottom](../hardware/pcb_1/documentation/renders/pcb_1-bottom.png) |
 | ![3D Top](../hardware/pcb_1/documentation/renders/pcb_1-3D_top.png) | ![3D Bottom](../hardware/pcb_1/documentation/renders/pcb_1-3D_bottom.png) |
 
-Generated files: [schematic PDF](../hardware/pcb_1/documentation/schematic/pcb_1-schematic.pdf) · [BOM](../hardware/pcb_1/documentation/bom/pcb_1-bom.csv) · [Gerbers](../hardware/pcb_1/documentation/fabrication/gerbers) · [assembly drawing](../hardware/pcb_1/documentation/fabrication/pcb_1-assembly.pdf) · [ERC/DRC reports](../hardware/pcb_1/documentation/checks) · [all outputs](../hardware/pcb_1/documentation)
+Generated files: [schematic](../hardware/pcb_1/documentation/schematic/pcb_1-schematic.pdf), [BOM](../hardware/pcb_1/documentation/bom/pcb_1-bom.csv), [gerbers](../hardware/pcb_1/documentation/fabrication/gerbers), [assembly](../hardware/pcb_1/documentation/fabrication/pcb_1-assembly.pdf), [checks](../hardware/pcb_1/documentation/checks).
 
-## Repository layout
+## Layout
 
 ```
-.
-├── .github/workflows/
-│   ├── fw_ci.yaml             # firmware build + static analysis
-│   └── hw_fabrication.yaml    # KiBot outputs, commit-back, README update
-├── .kibot/kibot.yaml          # shared KiBot config for all boards
-├── firmware/                  # STM32 CMake project (bring your own)
-├── hardware/
-│   ├── block_diagram/         # system architecture (draw.io)
-│   ├── templates/             # KiCad drawing sheet
-│   └── pcb_1/                 # one folder per board, named like its .kicad_pro
-│       └── documentation/     # generated by CI, do not edit by hand
-└── README.md                  # project README (CI-managed render section)
+.github/workflows/   fw_ci.yaml, hw_fabrication.yaml
+.kibot/kibot.yaml    shared KiBot config
+firmware/            STM32 CMake project
+hardware/
+  block_diagram/     draw.io architecture diagram
+  templates/         KiCad drawing sheet
+  pcb_1/             one folder per board
+    documentation/   generated by CI
+README.md            project README
 ```
 
-## How the fabrication workflow runs
+## Starting a new project
 
-1. **discover**: finds every `hardware/<name>/<name>.kicad_pro`. On a PR it keeps only boards with changed files; on manual dispatch it keeps all of them.
-2. **Fabrication**: runs KiBot in `kicad9_auto_full` for each board in parallel and uploads the outputs as artifacts.
-3. **commit**: collects all boards' outputs, generates status badges, rewrites the section between `<!-- PCB_RENDERS_START -->` and `<!-- PCB_RENDERS_END -->` in `README.md`, and pushes one commit to the PR branch.
-
-You can also start it manually from the Actions tab with **Run workflow**.
-
-## Getting started
-
-1. Click **Use this template** → **Create a new repository**.
-2. In the new repo:
-   - Delete `.github/README.md` (this file) so GitHub shows the project README.
-   - In `README.md`, set the project title and replace `OWNER/REPO` in the firmware badge URL.
-3. Rename or replace `hardware/pcb_1` with your board. The folder name must match the `.kicad_pro` file name.
-4. Delete the demo outputs in `hardware/pcb_1/documentation/`. CI regenerates them for your board.
-5. Add your STM32 CMake project to `firmware/` (the workflow expects `cmake/stm32_gcc.cmake`, `src/` and `include/`).
-6. Open a PR to `main` and the CI does the rest.
-
-To add another board, create `hardware/<name>/<name>.kicad_pro`. No workflow changes are needed.
+1. Use this template → Create a new repository
+2. Delete `.github/README.md`
+3. In `README.md`, set the title and replace `OWNER/REPO` in the badge URL
+4. Rename `hardware/pcb_1` (folder name = `.kicad_pro` name) and delete its `documentation/` folder
+5. Put the firmware in `firmware/`. CI expects `cmake/stm32_gcc.cmake`, `src/` and `include/`
+6. Open a PR
