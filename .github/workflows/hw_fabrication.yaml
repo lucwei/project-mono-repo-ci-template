@@ -59,7 +59,9 @@ jobs:
     needs: discover
     if: ${{ fromJson(needs.discover.outputs.matrix).board[0] != null }}
     runs-on: ubuntu-latest
-    container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
+    # Pinned dev build: KiBot 1.9.1 cannot load schematic polylines with a
+    # fill (INTI-CMNB/KiBot#959). Switch to the 1.9.2 release once it is out.
+    container: ghcr.io/inti-cmnb/kicad9_auto_full:dev_1.9.2-453cfc2_k9.0.7_d13.2_b4.2.4LTS
     strategy:
       matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
       fail-fast: false
