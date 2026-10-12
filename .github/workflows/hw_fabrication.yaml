@@ -69,6 +69,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      # KiCad 9 saves a (fill ...) on sheet-level polylines, which the KiBot
+      # release in this image rejects. Strip it from the working copy only.
+      - name: Strip fill from schematic polylines
+        working-directory: ${{ matrix.board.path }}
+        run: |
+          python3 - <<'EOF'
+          import glob, re
+          fill = re.compile(r'\n\t\t\(fill\n(?:\t\t\t[^\n]*\n)*?\t\t\)')
+          for path in glob.glob('*.kicad_sch'):
+              with open(path) as f:
+                  content = f.read()
+              content = re.sub(r'\n\t\(polyline\n.*?\n\t\)',
+                               lambda m: fill.sub('', m.group(0)),
+                               content, flags=re.DOTALL)
+              with open(path, 'w') as f:
+                  f.write(content)
+          EOF
+
       - name: Generate outputs
         working-directory: ${{ matrix.board.path }}
         run: |
