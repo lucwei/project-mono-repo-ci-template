@@ -31,8 +31,10 @@ jobs:
       - name: Find KiCad projects
         id: find_boards
         run: |
+          # Diff the PR's own commits (base...head) rather than against
+          # origin/main, which is empty if the PR is merged before this runs
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+            CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
           fi
 
           BOARDS="[]"
@@ -264,6 +266,10 @@ jobs:
 
       - name: Update README with renders
         run: |
+          # GitHub Pages URL of this repo, for links to the KiBot results page
+          OWNER="${{ github.repository_owner }}"
+          PAGES_URL="https://${OWNER,,}.github.io/${{ github.event.repository.name }}"
+
           # Build the new PCB section
           PCB_SECTION=""
           for BOARD_DIR in hardware/*/; do
@@ -278,6 +284,9 @@ jobs:
               PCB_SECTION="${PCB_SECTION}| 3D Top | 3D Bottom |\n"
               PCB_SECTION="${PCB_SECTION}|--------|----------|\n"
               PCB_SECTION="${PCB_SECTION}| ![3D Top](${BOARD_DIR}documentation/renders/${BOARD_NAME}-3D_top.png) | ![3D Bottom](${BOARD_DIR}documentation/renders/${BOARD_NAME}-3D_bottom.png) |\n\n"
+              if [ -f "${BOARD_DIR}documentation/web/${BOARD_NAME}-navigate.html" ]; then
+                PCB_SECTION="${PCB_SECTION}[Browse all outputs](${PAGES_URL}/${BOARD_DIR}documentation/web/${BOARD_NAME}-navigate.html)\n\n"
+              fi
             fi
           done
 

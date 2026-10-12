@@ -32,6 +32,8 @@ This is what the CI produced for the demo board `pcb_1`:
 
 Generated files: [schematic PDF](../hardware/pcb_1/documentation/schematic/pcb_1-schematic.pdf) · [BOM](../hardware/pcb_1/documentation/bom/pcb_1-bom.csv) · [Gerbers](../hardware/pcb_1/documentation/fabrication/gerbers) · [assembly drawing](../hardware/pcb_1/documentation/fabrication/pcb_1-assembly.pdf) · [ERC/DRC reports](../hardware/pcb_1/documentation/checks) · [all outputs](../hardware/pcb_1/documentation)
 
+All outputs can also be browsed on the [KiBot results page](https://lucwei.github.io/project-mono-repo-ci-template/hardware/pcb_1/documentation/web/pcb_1-navigate.html), served by GitHub Pages.
+
 ## Repository layout
 
 ```
@@ -63,6 +65,7 @@ You can also start it manually from the Actions tab with **Run workflow**.
 2. In the new repo:
    - Delete `.github/README.md` (this file) so GitHub shows the project README.
    - In `README.md`, set the project title and replace `OWNER/REPO` in the firmware badge URL.
+   - Optional: enable **Settings → Pages** (deploy from branch `main`, `/ (root)`) to host the KiBot results page.
 3. Rename or replace `hardware/pcb_1` with your board. The folder name must match the `.kicad_pro` file name.
 4. Delete the demo outputs in `hardware/pcb_1/documentation/`. CI regenerates them for your board.
 5. Add your STM32 CMake project to `firmware/` (the workflow expects `cmake/stm32_gcc.cmake`, `src/` and `include/`).

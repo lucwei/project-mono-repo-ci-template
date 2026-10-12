@@ -21,5 +21,7 @@
 |--------|----------|
 | ![3D Top](hardware/pcb_1/documentation/renders/pcb_1-3D_top.png) | ![3D Bottom](hardware/pcb_1/documentation/renders/pcb_1-3D_bottom.png) |
 
+[Browse all outputs](https://lucwei.github.io/project-mono-repo-ci-template/hardware/pcb_1/documentation/web/pcb_1-navigate.html)
+
 
 <!-- PCB_RENDERS_END -->
